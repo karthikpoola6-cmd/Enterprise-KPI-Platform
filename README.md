@@ -27,7 +27,22 @@ An enterprise analytics platform built for RISE Inc. that ingests raw operationa
 **Data Quality Monitor** — Pipeline status, 16 automated quality checks with pass/fail/warning tracking
 ![Data Quality Monitor](docs/screenshots/dashboard-quality.png)
 
-<!-- Power BI dashboard screenshots will be added here -->
+### Power BI Dashboards
+
+**Executive KPI Overview** — Revenue, profit, fulfillment rate with regional and product breakdowns
+![PBI Executive](docs/screenshots/pbi-executive-overview.png)
+
+**Sales Analytics** — Stacked revenue by region/category, pie chart breakdown, detailed product table
+![PBI Sales](docs/screenshots/pbi-sales-analytics.png)
+
+**Financial Performance** — Profit by category, cost of goods by region, discount analysis
+![PBI Financial](docs/screenshots/pbi-financial-performance.png)
+
+**Workforce Insights** — Order volume and revenue share by region with fulfillment metrics
+![PBI Workforce](docs/screenshots/pbi-workforce-insights.png)
+
+**Data Quality** — Quality check results table with SLA compliance by product category
+![PBI Quality](docs/screenshots/pbi-data-quality.png)
 
 ---
 
