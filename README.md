@@ -1,21 +1,56 @@
 # Enterprise KPI Data Platform
 
-> **Note:** All data in this project is **simulated sample data** generated for demonstration purposes. No real client, financial, employee, or customer data is used. The data generator intentionally includes real-world quality issues (duplicates, nulls, inconsistent formats) to showcase ETL pipeline capabilities.
+An enterprise analytics platform that ingests raw operational data from 4 source systems, transforms it through a 3-layer dimensional warehouse, runs automated data quality checks, and delivers executive dashboards.
+
+> **Note:** All data in this project is **simulated sample data** generated for demonstration purposes. No real client, financial, employee, or customer data is used.
+
+---
+
+## Dashboard Screenshots
+
+### Executive Dashboard
+KPI cards for revenue, margin, orders, fulfillment rate, and headcount. Revenue trend line and breakdowns by region and product category.
+
+![Executive Dashboard](docs/screenshots/dashboard-executive.png)
+
+### Sales Analytics
+Sales performance across regions, products, and customer segments. Product performance table with margin analysis.
+
+![Sales Analytics](docs/screenshots/dashboard-sales.png)
+
+### Financial Performance
+Budget vs actual comparison, variance by department with color-coded indicators, and expense breakdown.
+
+![Financial Performance](docs/screenshots/dashboard-finance.png)
+
+### Workforce Insights
+Headcount trends, turnover rate, salary costs, and department-level staffing breakdown.
+
+![Workforce Insights](docs/screenshots/dashboard-workforce.png)
+
+### Data Quality Monitor
+Pipeline execution status, 16 automated quality checks with pass/fail/warning indicators, and run history.
+
+![Data Quality Monitor](docs/screenshots/dashboard-quality.png)
+
+---
+
+## About RISE Inc.
+
+RISE Inc. is a company that delivers innovative digital transformation solutions powered by data, integrated enterprise applications, and mobility across multiple devices to address the enterprise software and IT services needs of multiple industry verticals with specific emphasis on Utilities, Energy, Healthcare, and Manufacturing. With a focus on enterprise, SME, and mid-market segments, RISE partners with tier-one technology and industry verticals to provide optimal digital transformation platforms for clients in a collaborative manner.
 
 ## Problem
 
-RISE Inc. is a mid-size professional services and distribution company operating across Texas (Dallas-Fort Worth, Houston, Austin, San Antonio). After 3 years of growth through acquisition, operational data was fragmented across 4 siloed systems:
+RISE Inc. had operational data fragmented across 4 siloed systems:
 
-- **Salesforce** — orders, customers, pipeline
+- **CRM (Salesforce)** — orders, customers, pipeline
 - **Warehouse Management** — products, inventory, fulfillment
-- **QuickBooks** — revenue, expenses, budgets
-- **ADP** — headcount, payroll, turnover
+- **Finance (QuickBooks)** — revenue, expenses, budgets
+- **HR (ADP)** — headcount, payroll, turnover
 
 Leadership spent **60+ hours per month** manually assembling reports from spreadsheets. No single source of truth existed for key metrics like revenue, margins, or employee turnover.
 
 ## Solution
-
-An enterprise analytics platform that:
 
 1. **Ingests raw data** from 4 source systems (CSV exports with real-world quality issues)
 2. **Transforms through a 3-layer warehouse** — Staging → Dimensions → Facts (Kimball methodology)
@@ -23,6 +58,27 @@ An enterprise analytics platform that:
 4. **Serves a React executive dashboard** — 5 pages covering sales, finance, workforce, and data quality
 5. **Exports to Power BI** — 8 CSV files optimized for 5 Power BI dashboards
 6. **Generates executive reports** — Plain-text KPI summaries for leadership review
+
+## Architecture
+
+```
+    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+    │  Source CSVs │────>│  Staging    │────>│ Dimensions  │
+    │  (4 systems) │     │  (stg_*)    │     │ (dim_*)     │
+    └─────────────┘     └─────────────┘     └──────┬──────┘
+                                                    │
+                         ┌──────────────────────────┘
+                         │
+                    ┌────┴────┐     ┌─────────────┐
+                    │  Facts  │────>│  Dashboard   │
+                    │ (fact_*)│     │  (React)     │
+                    └────┬────┘     └─────────────┘
+                         │
+                    ┌────┴────┐     ┌─────────────┐
+                    │ Quality │     │  Power BI   │
+                    │ Checks  │     │ (CSV export) │
+                    └─────────┘     └─────────────┘
+```
 
 ## Tech Stack
 
@@ -149,23 +205,6 @@ DIVIDE(
 ) * 100
 ```
 
-## Screenshots
-
-### Executive Dashboard
-![Executive Dashboard](docs/screenshots/dashboard-executive.png)
-
-### Sales Analytics
-![Sales Analytics](docs/screenshots/dashboard-sales.png)
-
-### Financial Performance
-![Financial Performance](docs/screenshots/dashboard-finance.png)
-
-### Workforce Insights
-![Workforce Insights](docs/screenshots/dashboard-workforce.png)
-
-### Data Quality Monitor
-![Data Quality Monitor](docs/screenshots/dashboard-quality.png)
-
 ## How to Run
 
 ### 1. Backend Setup
@@ -210,7 +249,7 @@ python scripts/generate_kpi_report.py
 
 ## Sample Data
 
-The data generator creates realistic enterprise data with intentional quality issues:
+All data is **simulated** using `scripts/generate_raw_data.py`. The generator intentionally includes real-world quality issues to demonstrate ETL pipeline capabilities:
 
 | Source | Records | Issues |
 |--------|---------|--------|
@@ -219,24 +258,3 @@ The data generator creates realistic enterprise data with intentional quality is
 | Products | 40 | Inconsistent boolean values (Yes/1/TRUE) |
 | Financials | ~1,383 | Inconsistent region names, mixed budget flags |
 | Employees | 150 | Mixed date formats, messy region names |
-
-## Architecture
-
-```
-    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-    │  Source CSVs │────>│  Staging    │────>│ Dimensions  │
-    │  (4 systems) │     │  (stg_*)    │     │ (dim_*)     │
-    └─────────────┘     └─────────────┘     └──────┬──────┘
-                                                    │
-                         ┌──────────────────────────┘
-                         │
-                    ┌────┴────┐     ┌─────────────┐
-                    │  Facts  │────>│  Dashboard   │
-                    │ (fact_*)│     │  (React)     │
-                    └────┬────┘     └─────────────┘
-                         │
-                    ┌────┴────┐     ┌─────────────┐
-                    │ Quality │     │  Power BI   │
-                    │ Checks  │     │ (CSV export) │
-                    └─────────┘     └─────────────┘
-```
