@@ -1,5 +1,7 @@
 # Project 3: Enterprise KPI Data Platform — Strategic Plan
 
+> **Disclaimer:** All data used in this project is **simulated sample data** generated for portfolio demonstration purposes. No real financial, employee, customer, or operational data is used.
+
 ## Why This Project
 
 RISE Inc.'s first two projects (Operations Command Center, Government Case Triage) proved Karthik can build full-stack operational systems. But a gap remained: **data engineering credibility**. Employers hiring for analytics, BI, and deployment roles want to see that a candidate can:

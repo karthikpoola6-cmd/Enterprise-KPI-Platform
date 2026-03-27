@@ -1,5 +1,7 @@
 # Enterprise KPI Data Platform
 
+> **Note:** All data in this project is **simulated sample data** generated for demonstration purposes. No real client, financial, employee, or customer data is used. The data generator intentionally includes real-world quality issues (duplicates, nulls, inconsistent formats) to showcase ETL pipeline capabilities.
+
 ## Problem
 
 RISE Inc. is a mid-size professional services and distribution company operating across Texas (Dallas-Fort Worth, Houston, Austin, San Antonio). After 3 years of growth through acquisition, operational data was fragmented across 4 siloed systems:
