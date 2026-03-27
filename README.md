@@ -1,37 +1,33 @@
 # Enterprise KPI Data Platform
 
-An enterprise analytics platform that ingests raw operational data from 4 source systems, transforms it through a 3-layer dimensional warehouse, runs automated data quality checks, and delivers executive dashboards.
+An enterprise analytics platform built for RISE Inc. that ingests raw operational data from 4 source systems, transforms it through a 3-layer dimensional warehouse, runs automated data quality checks, and delivers executive dashboards via React and Power BI.
 
-> **Note:** All data in this project is **simulated sample data** generated for demonstration purposes. No real client, financial, employee, or customer data is used.
+**Built with:** Python | FastAPI | React | Recharts | PostgreSQL/SQLite | Power BI | DAX
+
+> All data in this project is **simulated sample data** generated for demonstration purposes. No real client, financial, employee, or customer data is used.
 
 ---
 
-## Dashboard Screenshots
+## Screenshots
 
-### Executive Dashboard
-KPI cards for revenue, margin, orders, fulfillment rate, and headcount. Revenue trend line and breakdowns by region and product category.
+### React Dashboards
 
+**Executive Dashboard** — Revenue, margin, orders, fulfillment rate, headcount with trend lines and regional breakdowns
 ![Executive Dashboard](docs/screenshots/dashboard-executive.png)
 
-### Sales Analytics
-Sales performance across regions, products, and customer segments. Product performance table with margin analysis.
-
+**Sales Analytics** — Performance across regions, products, and customer segments with margin analysis
 ![Sales Analytics](docs/screenshots/dashboard-sales.png)
 
-### Financial Performance
-Budget vs actual comparison, variance by department with color-coded indicators, and expense breakdown.
-
+**Financial Performance** — Budget vs actual variance by department with color-coded indicators
 ![Financial Performance](docs/screenshots/dashboard-finance.png)
 
-### Workforce Insights
-Headcount trends, turnover rate, salary costs, and department-level staffing breakdown.
-
+**Workforce Insights** — Headcount trends, turnover rate, salary costs, and department staffing
 ![Workforce Insights](docs/screenshots/dashboard-workforce.png)
 
-### Data Quality Monitor
-Pipeline execution status, 16 automated quality checks with pass/fail/warning indicators, and run history.
-
+**Data Quality Monitor** — Pipeline status, 16 automated quality checks with pass/fail/warning tracking
 ![Data Quality Monitor](docs/screenshots/dashboard-quality.png)
+
+<!-- Power BI dashboard screenshots will be added here -->
 
 ---
 
@@ -43,42 +39,48 @@ RISE Inc. is a company that delivers innovative digital transformation solutions
 
 RISE Inc. had operational data fragmented across 4 siloed systems:
 
-- **CRM (Salesforce)** — orders, customers, pipeline
-- **Warehouse Management** — products, inventory, fulfillment
-- **Finance (QuickBooks)** — revenue, expenses, budgets
-- **HR (ADP)** — headcount, payroll, turnover
+| Source System | Data | Pain Point |
+|--------------|------|------------|
+| CRM (Salesforce) | Orders, customers, pipeline | No unified revenue view |
+| Warehouse Mgmt | Products, inventory, fulfillment | SLA tracking in spreadsheets |
+| Finance (QuickBooks) | Revenue, expenses, budgets | Manual budget variance reports |
+| HR (ADP) | Headcount, payroll, turnover | No workforce analytics |
 
-Leadership spent **60+ hours per month** manually assembling reports from spreadsheets. No single source of truth existed for key metrics like revenue, margins, or employee turnover.
+Leadership spent **60+ hours per month** manually assembling reports. No single source of truth existed for key metrics like revenue, margins, or employee turnover.
 
 ## Solution
 
-1. **Ingests raw data** from 4 source systems (CSV exports with real-world quality issues)
-2. **Transforms through a 3-layer warehouse** — Staging → Dimensions → Facts (Kimball methodology)
+An end-to-end data platform that:
+
+1. **Ingests raw data** from 4 source systems with real-world quality issues (duplicates, nulls, inconsistent formats)
+2. **Transforms through a 3-layer warehouse** — Staging → Dimensions → Facts (Kimball star schema)
 3. **Runs 16 automated data quality checks** — completeness, uniqueness, referential integrity, range validation
-4. **Serves a React executive dashboard** — 5 pages covering sales, finance, workforce, and data quality
-5. **Exports to Power BI** — 8 CSV files optimized for 5 Power BI dashboards
+4. **Serves 5 React dashboard pages** — Executive, Sales, Finance, Workforce, Data Quality
+5. **Exports to Power BI** — 8 denormalized CSV files for 5 Power BI dashboards with DAX measures
 6. **Generates executive reports** — Plain-text KPI summaries for leadership review
 
 ## Architecture
 
 ```
-    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-    │  Source CSVs │────>│  Staging    │────>│ Dimensions  │
-    │  (4 systems) │     │  (stg_*)    │     │ (dim_*)     │
-    └─────────────┘     └─────────────┘     └──────┬──────┘
-                                                    │
-                         ┌──────────────────────────┘
-                         │
-                    ┌────┴────┐     ┌─────────────┐
-                    │  Facts  │────>│  Dashboard   │
-                    │ (fact_*)│     │  (React)     │
-                    └────┬────┘     └─────────────┘
-                         │
-                    ┌────┴────┐     ┌─────────────┐
-                    │ Quality │     │  Power BI   │
-                    │ Checks  │     │ (CSV export) │
-                    └─────────┘     └─────────────┘
+  Source Systems          ETL Pipeline              Data Warehouse           Dashboards
+  ┌──────────────┐      ┌──────────────────┐      ┌──────────────────┐     ┌──────────────┐
+  │ Salesforce   │      │ Phase 1: Extract │      │ Staging (stg_*)  │     │              │
+  │ Warehouse    │─────>│ Phase 2: Dims    │─────>│ Dimensions (dim_*)│────>│ React (5 pg) │
+  │ QuickBooks   │      │ Phase 3: Facts   │      │ Facts (fact_*)   │     │ Power BI (5) │
+  │ ADP          │      │ Phase 4: Quality │      │ Quality Logs     │     │              │
+  └──────────────┘      └──────────────────┘      └──────────────────┘     └──────────────┘
 ```
+
+## Key Features
+
+| Feature | Details |
+|---------|---------|
+| **Dimensional Data Model** | 17 tables: 5 staging, 6 dimensions, 4 facts, 2 logging |
+| **ETL Pipeline** | 4-phase Python pipeline with orchestrator, timing logs, and run tracking |
+| **Data Quality** | 16 automated checks — completeness, uniqueness, referential integrity, range |
+| **React Dashboard** | 5 pages with KPI cards, trend charts, bar charts, and sortable tables |
+| **Power BI** | 8 CSV exports with 5 DAX measures for executive dashboards |
+| **Documentation** | Architecture memo, data lineage, pipeline design, KPI definitions |
 
 ## Tech Stack
 
@@ -86,19 +88,50 @@ Leadership spent **60+ hours per month** manually assembling reports from spread
 |-------|-----------|
 | Backend | Python, FastAPI, SQLAlchemy |
 | Frontend | React, Recharts |
-| Database | SQLite (3-layer warehouse) |
-| ETL Pipeline | Python scripts (4-phase pipeline) |
+| Database | SQLite (3-layer dimensional warehouse) |
+| ETL Pipeline | Python (4-phase modular pipeline) |
 | Analytics | Power BI, DAX |
-| Data Export | CSV (8 export files) |
+| Data Export | CSV (8 denormalized export files) |
 
-## Key Features
+## DAX Measures (Power BI)
 
-- **Dimensional Data Model** — 17 tables: 5 staging, 6 dimensions, 4 facts, 2 logging
-- **ETL Pipeline** — Automated 4-phase pipeline with orchestrator and timing logs
-- **Data Quality Monitoring** — 16 automated checks with historical tracking
-- **Executive Dashboard** — Revenue trends, margin analysis, workforce insights
-- **Power BI Integration** — 8 CSV exports with denormalized data for dashboards
-- **Consulting Documentation** — Architecture memo, data lineage, KPI definitions, pipeline design
+```dax
+Gross Margin % =
+DIVIDE(SUM(fact_sales[gross_profit]), SUM(fact_sales[net_amount]), 0) * 100
+
+Revenue Growth QoQ =
+VAR CurrentQ = SUM(fact_sales[net_amount])
+VAR PrevQ = CALCULATE(SUM(fact_sales[net_amount]), DATEADD(dim_date[full_date], -3, MONTH))
+RETURN DIVIDE(CurrentQ - PrevQ, PrevQ, 0) * 100
+
+Fulfillment Rate =
+DIVIDE(COUNTROWS(FILTER(fact_sales, fact_sales[sla_met] = TRUE)), COUNTROWS(fact_sales), 0) * 100
+
+Employee Turnover Rate =
+DIVIDE(SUM(fact_workforce[terminations]), AVERAGE(fact_workforce[active_headcount]), 0) * 100
+
+Budget Variance % =
+DIVIDE(SUM(fact_financial[variance_amount]), SUM(fact_financial[budget_amount]), 0) * 100
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/kpis` | Current KPI values (latest month) |
+| GET | `/api/kpis/trends` | KPI values over time |
+| GET | `/api/sales/summary` | Sales summary with optional filters |
+| GET | `/api/sales/by-region` | Revenue breakdown by region |
+| GET | `/api/sales/by-product` | Revenue breakdown by product category |
+| GET | `/api/sales/by-customer-segment` | Revenue by customer segment |
+| GET | `/api/finance/overview` | Financial summary (revenue, expenses, margins) |
+| GET | `/api/finance/variance` | Budget vs actual by department |
+| GET | `/api/workforce/overview` | Workforce summary (headcount, turnover) |
+| GET | `/api/workforce/by-department` | Department-level workforce metrics |
+| GET | `/api/quality/latest` | Latest data quality check results |
+| GET | `/api/quality/history` | Quality check history across runs |
+| GET | `/api/pipeline/status` | Latest pipeline run status |
+| POST | `/api/pipeline/run` | Trigger a full pipeline run |
 
 ## Project Structure
 
@@ -106,13 +139,13 @@ Leadership spent **60+ hours per month** manually assembling reports from spread
 enterprise-kpi-platform/
 ├── backend/
 │   └── app/
-│       ├── main.py              # FastAPI (14 endpoints)
-│       ├── models.py            # 17 SQLAlchemy models
+│       ├── main.py              # FastAPI app (14 endpoints)
+│       ├── models.py            # 17 SQLAlchemy table models
 │       ├── schemas.py           # Pydantic response schemas
-│       └── database.py          # SQLAlchemy setup
+│       └── database.py          # SQLAlchemy engine setup
 ├── frontend/
 │   └── src/
-│       ├── App.js               # Sidebar nav (5 pages)
+│       ├── App.js               # Sidebar navigation (5 pages)
 │       ├── api.js               # Axios API client
 │       └── components/
 │           ├── ExecutiveDashboard.js
@@ -125,84 +158,25 @@ enterprise-kpi-platform/
 │           ├── BarChart.js
 │           └── DataTable.js
 ├── scripts/
-│   ├── generate_raw_data.py     # Raw data generator (messy data)
-│   ├── export_for_powerbi.py    # CSV exporter (8 files)
-│   ├── generate_kpi_report.py   # Executive report generator
+│   ├── generate_raw_data.py     # Generates messy raw data (5 CSVs)
+│   ├── export_for_powerbi.py    # Exports 8 CSVs for Power BI
+│   ├── generate_kpi_report.py   # Executive text report
 │   └── pipeline/
-│       ├── run_pipeline.py      # Orchestrator
-│       ├── extract_to_staging.py
-│       ├── transform_dimensions.py
-│       ├── transform_facts.py
-│       └── run_quality_checks.py
+│       ├── run_pipeline.py      # Orchestrator (runs all 4 phases)
+│       ├── extract_to_staging.py    # Phase 1: Raw CSV → staging
+│       ├── transform_dimensions.py  # Phase 2: Staging → dimensions
+│       ├── transform_facts.py       # Phase 3: Staging + dims → facts
+│       └── run_quality_checks.py    # Phase 4: 16 validations
 ├── data/
 │   ├── raw/                     # Source CSVs (generated)
 │   └── exports/                 # Power BI CSVs (exported)
 ├── docs/
-│   ├── DATA_ARCHITECTURE_MEMO.md
-│   ├── DATA_LINEAGE.md
-│   ├── ETL_PIPELINE_DESIGN.md
-│   └── KPI_DEFINITIONS.md
+│   ├── DATA_ARCHITECTURE_MEMO.md    # Consulting discovery memo
+│   ├── DATA_LINEAGE.md              # Source-to-target field mapping
+│   ├── ETL_PIPELINE_DESIGN.md       # Pipeline process flow
+│   └── KPI_DEFINITIONS.md           # Semantic metrics layer
 ├── PROJECT_PLAN.md
 └── README.md
-```
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/kpis` | Current KPI values (latest month) |
-| GET | `/api/kpis/trends` | KPI values over time |
-| GET | `/api/sales/summary` | Sales summary with optional filters |
-| GET | `/api/sales/by-region` | Revenue by region |
-| GET | `/api/sales/by-product` | Revenue by product category |
-| GET | `/api/sales/by-customer-segment` | Revenue by customer segment |
-| GET | `/api/finance/overview` | Financial summary (revenue, expenses, margins) |
-| GET | `/api/finance/variance` | Budget vs actual by department |
-| GET | `/api/workforce/overview` | Workforce summary (headcount, turnover) |
-| GET | `/api/workforce/by-department` | Department-level workforce metrics |
-| GET | `/api/quality/latest` | Latest data quality check results |
-| GET | `/api/quality/history` | Quality check history across runs |
-| GET | `/api/pipeline/status` | Latest pipeline run status |
-| POST | `/api/pipeline/run` | Trigger a full pipeline run |
-
-## DAX Measures (Power BI)
-
-```dax
-Gross Margin % =
-DIVIDE(
-    SUM(fact_sales[gross_profit]),
-    SUM(fact_sales[net_amount]),
-    0
-) * 100
-
-Revenue Growth QoQ =
-VAR CurrentQ = SUM(fact_sales[net_amount])
-VAR PrevQ = CALCULATE(
-    SUM(fact_sales[net_amount]),
-    DATEADD(dim_date[full_date], -3, MONTH)
-)
-RETURN DIVIDE(CurrentQ - PrevQ, PrevQ, 0) * 100
-
-Fulfillment Rate =
-DIVIDE(
-    COUNTROWS(FILTER(fact_sales, fact_sales[sla_met] = TRUE)),
-    COUNTROWS(fact_sales),
-    0
-) * 100
-
-Employee Turnover Rate =
-DIVIDE(
-    SUM(fact_workforce[terminations]),
-    AVERAGE(fact_workforce[active_headcount]),
-    0
-) * 100
-
-Budget Variance % =
-DIVIDE(
-    SUM(fact_financial[variance_amount]),
-    SUM(fact_financial[budget_amount]),
-    0
-) * 100
 ```
 
 ## How to Run
@@ -238,7 +212,7 @@ npm start
 ### 5. Power BI Export
 ```bash
 python scripts/export_for_powerbi.py
-# CSVs saved to data/exports/
+# 8 CSVs saved to data/exports/
 ```
 
 ### 6. Executive Report
@@ -251,10 +225,10 @@ python scripts/generate_kpi_report.py
 
 All data is **simulated** using `scripts/generate_raw_data.py`. The generator intentionally includes real-world quality issues to demonstrate ETL pipeline capabilities:
 
-| Source | Records | Issues |
-|--------|---------|--------|
-| Orders | ~2,040 | ~2% duplicates, ~3% null values, 5 date formats |
+| Source | Records | Intentional Quality Issues |
+|--------|---------|---------------------------|
+| Orders | ~2,040 | ~2% duplicates, ~3% nulls, 5 date formats, messy region names |
 | Customers | ~306 | ~2% duplicates, missing emails/phones |
-| Products | 40 | Inconsistent boolean values (Yes/1/TRUE) |
-| Financials | ~1,383 | Inconsistent region names, mixed budget flags |
-| Employees | 150 | Mixed date formats, messy region names |
+| Products | 40 | Inconsistent boolean values (Yes/1/TRUE/Active) |
+| Financials | ~1,383 | Inconsistent region names, mixed budget flags (Y/Yes/TRUE) |
+| Employees | 150 | Mixed date formats, messy region names, On Leave status |
