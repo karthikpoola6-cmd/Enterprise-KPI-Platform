@@ -149,6 +149,23 @@ DIVIDE(
 ) * 100
 ```
 
+## Screenshots
+
+### Executive Dashboard
+![Executive Dashboard](docs/screenshots/dashboard-executive.png)
+
+### Sales Analytics
+![Sales Analytics](docs/screenshots/dashboard-sales.png)
+
+### Financial Performance
+![Financial Performance](docs/screenshots/dashboard-finance.png)
+
+### Workforce Insights
+![Workforce Insights](docs/screenshots/dashboard-workforce.png)
+
+### Data Quality Monitor
+![Data Quality Monitor](docs/screenshots/dashboard-quality.png)
+
 ## How to Run
 
 ### 1. Backend Setup
